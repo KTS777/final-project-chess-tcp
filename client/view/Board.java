@@ -86,6 +86,9 @@ public class Board extends JPanel {
         King[] kings = PieceFactory.createStandardSetup(board, whitePieces, blackPieces);
         CheckmateDetector cmd = new CheckmateDetector(this, whitePieces, blackPieces, kings[0], kings[1]);
         gameController = new GameController(cmd, this);
+        System.out.println("First turn is white? " + gameController.isWhiteTurn());
+        System.out.println("White pieces: " + whitePieces.size());
+        System.out.println("Black pieces: " + blackPieces.size());
     }
 
     public Square[][] getSquareArray() {
@@ -93,7 +96,7 @@ public class Board extends JPanel {
     }
 
     public boolean getTurn() {
-        return gameController.isWhiteTurn(); // Now returns boolean ✅
+        return gameController.isWhiteTurn();
     }
 
     public void setCurrPiece(Piece p) {
