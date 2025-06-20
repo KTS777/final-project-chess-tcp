@@ -76,12 +76,18 @@ public class Square extends JComponent {
         if (this == o) return true;
         if (!(o instanceof Square)) return false;
         Square other = (Square) o;
-        return this.getXNum() == other.getXNum() &&
-                this.getYNum() == other.getYNum();
+        return this.xNum == other.xNum && this.yNum == other.yNum;
     }
 
     @Override
     public int hashCode() {
-        return 31 * getXNum() + getYNum();
+        return 31 * xNum + yNum;
     }
+
+    @Override
+    public String toString() {
+        return "(" + xNum + "," + yNum + ")";
+    }
+
+
 }

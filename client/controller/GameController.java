@@ -33,7 +33,6 @@ public class GameController {
     }
 
     public void switchTurn() {
-        System.out.println("Turn switched. White turn? " + !whiteTurn);
         whiteTurn = !whiteTurn;
     }
 
@@ -58,8 +57,6 @@ public class GameController {
         if (!square.isOccupied()) return;
 
         Piece piece = square.getOccupyingPiece();
-        System.out.println("Selected piece: " + piece.getSymbol() + " | isWhite: " + piece.isWhite());
-        System.out.println("Turn is white? " + whiteTurn);
         if (!isCorrectPlayerTurn(piece)) return;
 
         this.currPiece = piece;
