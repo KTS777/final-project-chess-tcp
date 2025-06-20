@@ -20,6 +20,14 @@ public class BoardMouseHandler implements MouseListener, MouseMotionListener {
         board.setDragCoordinates(e.getX(), e.getY());
 
         Square sq = (Square) board.getComponentAt(new Point(e.getX(), e.getY()));
+
+        if (sq.isOccupied()) {
+            if (!board.getGameController().isCorrectPlayerTurn(sq.getOccupyingPiece())) {
+                System.out.println("It's not " + (sq.getOccupyingPiece().isWhite() ? "White" : "Black") + "'s turn.");
+                return; // Ignore click on wrong color piece
+            }
+        }
+
         board.getGameController().selectPiece(sq);
         board.repaint();
     }

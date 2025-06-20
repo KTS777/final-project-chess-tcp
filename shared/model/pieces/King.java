@@ -1,5 +1,6 @@
 package model.pieces;
 
+import controller.CheckmateDetector;
 import model.Piece;
 import model.Square;
 import view.Board;
@@ -42,6 +43,20 @@ public class King extends Piece {
 
         return legalMoves;
     }
+
+    @Override
+    public boolean isValidMove(int fromRow, int fromCol, int toRow, int toCol, Piece[][] board) {
+        int dx = Math.abs(fromCol - toCol);
+        int dy = Math.abs(fromRow - toRow);
+
+        if (dx <= 1 && dy <= 1) {
+            Piece target = board[toRow][toCol];
+            return target == null || target.isWhite() != this.isWhite();
+        }
+        return false;
+    }
+
+
 
     @Override
     public String getSymbol() {

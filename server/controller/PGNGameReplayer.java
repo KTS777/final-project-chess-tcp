@@ -11,7 +11,7 @@ public class PGNGameReplayer {
     private static int[] lastDoubleStepPawn = null;
 
     public static boolean replayGame(PGNParser.ParsedGame game, StringBuilder outputBuffer) {
-        LogicBoard board = new LogicBoard();  // ✅ GUI-free board
+        LogicBoard board = new LogicBoard();
         boolean isWhiteTurn = true;
 
         for (String move : game.moves) {

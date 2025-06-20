@@ -93,7 +93,7 @@ public class Board extends JPanel {
     }
 
     public boolean getTurn() {
-        return gameController.isWhiteTurn(); // Now returns boolean ✅
+        return gameController.isWhiteTurn();
     }
 
     public void setCurrPiece(Piece p) {

@@ -61,6 +61,8 @@ public class GameController {
 
         this.currPiece = piece;
         square.setDisplay(false);
+
+
     }
 
     public boolean handlePieceDrop(Square targetSquare) {
