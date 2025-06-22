@@ -58,7 +58,7 @@ public abstract class Piece {
     }
 
     public int getColor() {
-        return isWhite ? 0 : 1;
+        return isWhite ? 1 : 0;
     }
 
 

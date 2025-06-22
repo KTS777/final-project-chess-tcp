@@ -1,5 +1,7 @@
 package view;
 
+import network.ChessClient;
+
 import javax.imageio.ImageIO;
 import javax.swing.*;
 import java.awt.*;
@@ -10,6 +12,12 @@ public class StartMenu implements Runnable {
     private static final String WHITE_PAWN_IMG = "wp.png";
     private static final String[] HOURS = {"0", "1", "2", "3"};
     private static final int MAX_TIME_UNIT = 60;
+
+    private final ChessClient client;
+
+    public StartMenu(ChessClient client) {
+        this.client = client;
+    }
 
     public void run() {
         final JFrame startWindow = new JFrame("Chess");
@@ -84,7 +92,7 @@ public class StartMenu implements Runnable {
         int mm = Integer.parseInt((String) minutes.getSelectedItem());
         int ss = Integer.parseInt((String) seconds.getSelectedItem());
 
-        new GameWindow(bn, wn, hh, mm, ss);
+        new GameWindow(bn, wn, hh, mm, ss, client);
         startWindow.dispose();
     }
 

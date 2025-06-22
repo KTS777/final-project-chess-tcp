@@ -2,6 +2,7 @@ package view;
 
 import controller.ChessTimer;
 import model.Clock;
+import network.ChessClient;
 
 import javax.imageio.ImageIO;
 import javax.swing.*;
@@ -15,12 +16,14 @@ public class GameWindow {
     public Clock whiteClock;
     private ChessTimer chessTimer;
     private Board board;
-    
-    
-    
-    public GameWindow(String blackName, String whiteName, int hh,
-                      int mm, int ss) {
+    private ChessClient client;
 
+
+
+
+    public GameWindow(String blackName, String whiteName, int hh,
+                      int mm, int ss, ChessClient client) {
+        this.client = client;
         blackClock = new Clock(hh, ss, mm);
         whiteClock = new Clock(hh, ss, mm);
 
@@ -45,7 +48,7 @@ public class GameWindow {
     }
 
     private void addGameComponents(String blackName, String whiteName, int hh, int mm, int ss) {
-        this.board = new Board(this);
+        this.board = new Board(this, client);
 
         JPanel gameData = createGameDataPanel(blackName, whiteName, hh, mm, ss);
         gameWindow.add(gameData, BorderLayout.NORTH);
@@ -133,7 +136,7 @@ public class GameWindow {
                     JOptionPane.YES_NO_OPTION
             );
             if (result == JOptionPane.YES_OPTION) {
-                SwingUtilities.invokeLater(new StartMenu());
+                SwingUtilities.invokeLater(new StartMenu(client));
                 gameWindow.dispose();
             }
         };
@@ -169,7 +172,7 @@ public class GameWindow {
         );
 
         if (choice == JOptionPane.YES_OPTION) {
-            SwingUtilities.invokeLater(new StartMenu());
+            SwingUtilities.invokeLater(new StartMenu(client));
             gameWindow.dispose();
         }
     }

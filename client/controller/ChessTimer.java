@@ -11,6 +11,7 @@ import java.awt.event.ActionListener;
 public class ChessTimer {
     private final Timer timer;
 
+
     public ChessTimer(Board board,
                       Clock whiteClock,
                       Clock blackClock,
@@ -53,7 +54,7 @@ public class ChessTimer {
                 );
 
                 if (choice == JOptionPane.YES_OPTION) {
-                    new GameWindow(opponent, winner, hh, mm, ss);
+                    new GameWindow(opponent, winner, hh, mm, ss, null);
                 }
                 parent.dispose();
             }

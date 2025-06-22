@@ -6,6 +6,7 @@ import model.Piece;
 import model.PieceFactory;
 import model.Square;
 import model.pieces.King;
+import network.ChessClient;
 
 import javax.swing.*;
 import java.awt.*;
@@ -26,11 +27,14 @@ public class Board extends JPanel {
     private int dragY;
 
     private GameController gameController;
+    private final ChessClient client;
+
 
     private final BoardRenderer renderer = new BoardRenderer();
 
-    public Board(GameWindow gameWindow) {
+    public Board(GameWindow gameWindow, ChessClient client) {
         this.gameWindow = gameWindow;
+        this.client = client;
         board = new Square[BOARD_SIZE][BOARD_SIZE];
         blackPieces = new LinkedList<>();
         whitePieces = new LinkedList<>();
@@ -58,7 +62,7 @@ public class Board extends JPanel {
     }
 
     private void registerInputListeners() {
-        BoardMouseHandler handler = new BoardMouseHandler(this);
+        BoardMouseHandler handler = new BoardMouseHandler(this, client);
         this.addMouseListener(handler);
         this.addMouseMotionListener(handler);
     }
