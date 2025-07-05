@@ -1,6 +1,5 @@
 package pieces;
 
-
 import client.view.Board;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
@@ -41,6 +40,18 @@ public class KnightTest {
     }
 
     @Test
+    public void testKnightMovesFromCorner() {
+        knight.setPosition(board.getSquare(0, 0));
+        board.getSquare(4, 4).removePiece();
+        board.getSquare(0, 0).setOccupyingPiece(knight);
+
+        List<Square> legalMoves = knight.getLegalMoves(board);
+        assertEquals(2, legalMoves.size());
+        assertTrue(legalMoves.contains(board.getSquare(2, 1)));
+        assertTrue(legalMoves.contains(board.getSquare(1, 2)));
+    }
+
+    @Test
     public void testKnightCanCaptureEnemy() {
         Piece enemy = new Rook(false, board.getSquare(3, 2), "br.png"); // Black rook at (3, 2)
         board.getSquare(3, 2).setOccupyingPiece(enemy);
@@ -56,17 +67,5 @@ public class KnightTest {
 
         List<Square> legalMoves = knight.getLegalMoves(board);
         assertFalse(legalMoves.contains(board.getSquare(3, 2)));
-    }
-
-    @Test
-    public void testKnightMovesFromCorner() {
-        knight.setPosition(board.getSquare(0, 0));
-        board.getSquare(4, 4).removePiece();
-        board.getSquare(0, 0).setOccupyingPiece(knight);
-
-        List<Square> legalMoves = knight.getLegalMoves(board);
-        assertEquals(2, legalMoves.size());
-        assertTrue(legalMoves.contains(board.getSquare(2, 1)));
-        assertTrue(legalMoves.contains(board.getSquare(1, 2)));
     }
 }

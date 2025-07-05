@@ -9,5 +9,8 @@
         <module name="final-project-chess-tcp" />
       </profile>
     </annotationProcessing>
+    <bytecodeTargetLevel>
+      <module name="chess-app" target="17" />
+    </bytecodeTargetLevel>
   </component>
 </project>

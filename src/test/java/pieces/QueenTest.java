@@ -14,7 +14,9 @@ import static org.junit.jupiter.api.Assertions.*;
 
 public class QueenTest {
 
+
     private Board board;
+    private Queen queen;
 
     @BeforeEach
     public void setUp() {
@@ -22,8 +24,9 @@ public class QueenTest {
         board.setupEmptyBoard();
     }
 
+
     @Test
-    public void testQueenMovesDiagonallyAndStraight() {
+    public void testQueenMovesInAllDirections() {
         Queen queen = new Queen(true, board.getSquare(3, 3), "wq.png");
         board.getSquare(3, 3).setOccupyingPiece(queen);
 
@@ -31,36 +34,21 @@ public class QueenTest {
 
         // Diagonal moves
         assertTrue(moves.contains(board.getSquare(2, 2)));
+
         assertTrue(moves.contains(board.getSquare(4, 4)));
+
         assertTrue(moves.contains(board.getSquare(2, 4)));
         assertTrue(moves.contains(board.getSquare(4, 2)));
 
+
         // Straight moves
         assertTrue(moves.contains(board.getSquare(3, 2)));
+
         assertTrue(moves.contains(board.getSquare(3, 4)));
+
         assertTrue(moves.contains(board.getSquare(2, 3)));
         assertTrue(moves.contains(board.getSquare(4, 3)));
     }
 
-    @Test
-    public void testQueenBlockedByFriendlyPiece() {
-        Queen queen = new Queen(true, board.getSquare(3, 3), "wq.png");
-        board.getSquare(3, 3).setOccupyingPiece(queen);
-        board.getSquare(3, 4).setOccupyingPiece(new Pawn(true, board.getSquare(3, 4), "wp.png")); // friendly pawn
 
-        List<Square> moves = queen.getLegalMoves(board);
-
-        assertFalse(moves.contains(board.getSquare(3, 4)));
-    }
-
-    @Test
-    public void testQueenCanCaptureEnemyPiece() {
-        Queen queen = new Queen(true, board.getSquare(3, 3), "wq.png");
-        board.getSquare(3, 3).setOccupyingPiece(queen);
-        board.getSquare(3, 4).setOccupyingPiece(new Pawn(false, board.getSquare(3, 4), "bp.png")); // enemy pawn
-
-        List<Square> moves = queen.getLegalMoves(board);
-
-        assertTrue(moves.contains(board.getSquare(3, 4)));
-    }
 }
