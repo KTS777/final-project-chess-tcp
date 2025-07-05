@@ -1,7 +1,6 @@
 package client.view;
 
 
-
 import client.network.ChessClient;
 import shared.model.Square;
 
@@ -9,6 +8,7 @@ import java.awt.*;
 import java.awt.event.MouseEvent;
 import java.awt.event.MouseListener;
 import java.awt.event.MouseMotionListener;
+import java.sql.SQLException;
 
 public class BoardMouseHandler implements MouseListener, MouseMotionListener {
 
@@ -44,7 +44,12 @@ public class BoardMouseHandler implements MouseListener, MouseMotionListener {
     @Override
     public void mouseReleased(MouseEvent e) {
         toSquare = (Square) board.getComponentAt(new Point(e.getX(), e.getY()));
-        boolean moveHappened = board.getGameController().handlePieceDrop(toSquare);
+        boolean moveHappened = false;
+        try {
+            moveHappened = board.getGameController().handlePieceDrop(toSquare);
+        } catch (SQLException ex) {
+            throw new RuntimeException(ex);
+        }
 
         if (moveHappened && fromSquare != null && toSquare != null) {
             String move = getAlgebraic(fromSquare) + getAlgebraic(toSquare);  // e.g., e2e4

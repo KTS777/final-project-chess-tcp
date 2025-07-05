@@ -158,6 +158,8 @@ public class GameController {
     }
 
     private void finishGame(int winningColor) throws SQLException {
+        if (gameOver) return;
+
         this.gameOver = true;
         this.winningColor = winningColor;
 
@@ -170,14 +172,16 @@ public class GameController {
             pgn.append(movesPGN.get(i)).append(" ");
         }
 
-        // Save to DB (replace with real usernames once you add login later)
+
         String whiteUsername = "Alice";
         String blackUsername = "Bob";
 
-        DatabaseManager db = new DatabaseManager();
-        db.connect("jdbc:postgresql://localhost:5432/chess_db", "chess_db", "postgres", "your_password");
-        db.saveGame(3, 4, resultString, pgn.toString().trim());
-        db.disconnect();
+        if (isWhitePlayer) {
+            DatabaseManager db = new DatabaseManager();
+            db.connect("localhost", "chess_db", "postgres", "password");
+            db.saveGame(3, 4, resultString, pgn.toString().trim());
+            db.disconnect();
+        }
 
         // Print full PGN
         System.out.println("\nPGN:");

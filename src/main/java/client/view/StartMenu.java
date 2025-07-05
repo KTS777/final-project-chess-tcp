@@ -11,6 +11,7 @@ import shared.model.pieces.King;
 import javax.imageio.ImageIO;
 import javax.swing.*;
 import java.awt.*;
+import java.sql.SQLException;
 import java.util.LinkedList;
 
 public class StartMenu implements Runnable {
@@ -118,7 +119,11 @@ public class StartMenu implements Runnable {
 
                 SwingUtilities.invokeLater(() -> {
                     controller.setCurrentPiece(from.getOccupyingPiece());
-                    controller.handlePieceDrop(to);
+                    try {
+                        controller.handlePieceDrop(to);
+                    } catch (SQLException e) {
+                        throw new RuntimeException(e);
+                    }
                     board.repaint();
                 });
             }
