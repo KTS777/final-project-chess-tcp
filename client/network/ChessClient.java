@@ -11,6 +11,9 @@ public class ChessClient {
     private final String host;
     private final int port;
 
+    private String role; // "WHITE" or "BLACK"
+
+
     public ChessClient(String host, int port) {
         this.host = host;
         this.port = port;
@@ -21,6 +24,9 @@ public class ChessClient {
         in = new BufferedReader(new InputStreamReader(socket.getInputStream()));
         out = new PrintWriter(socket.getOutputStream(), true); // enable auto-flush
         System.out.println("[CLIENT] Connected to server at " + host + ":" + port);
+
+        role = in.readLine();
+        System.out.println("[CLIENT] Assigned role: " + role);
     }
 
     public void sendMessage(String message) {
@@ -49,4 +55,9 @@ public class ChessClient {
             System.err.println("[CLIENT] Failed to close resources: " + e.getMessage());
         }
     }
+
+    public String getRole() {
+        return role;
+    }
+
 }

@@ -31,6 +31,8 @@ public class BoardMouseHandler implements MouseListener, MouseMotionListener {
 
     @Override
     public void mousePressed(MouseEvent e) {
+        if (!board.getGameController().isMyTurn()) return;
+
         board.setDragCoordinates(e.getX(), e.getY());
         fromSquare = (Square) board.getComponentAt(new Point(e.getX(), e.getY()));
         board.getGameController().selectPiece(fromSquare);

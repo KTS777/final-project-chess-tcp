@@ -15,17 +15,24 @@ public class GameController {
     private int winningColor = -1;
     private final Board board;
     private final MoveService moveService = new MoveService();
+    private final boolean isWhitePlayer;
+
 
     private Square lastDoubleStepSquare;
 
 
 
-    public GameController(CheckmateDetector checkmateDetector, Board board) {
+    public GameController(CheckmateDetector checkmateDetector, Board board, boolean isWhitePlayer) {
         this.checkmateDetector = checkmateDetector;
         this.board = board;
+        this.isWhitePlayer = isWhitePlayer;
         this.whiteTurn = true;
     }
 
+
+    public boolean isMyTurn() {
+        return (whiteTurn && isWhitePlayer) || (!whiteTurn && !isWhitePlayer);
+    }
 
 
     public boolean isWhiteTurn() {

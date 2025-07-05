@@ -19,10 +19,8 @@ public class GameWindow {
     private ChessClient client;
 
 
-
-
-    public GameWindow(String blackName, String whiteName, int hh,
-                      int mm, int ss, ChessClient client) {
+    public GameWindow(Board board, String blackName, String whiteName, int hh, int mm, int ss, ChessClient client) {
+        this.board = board;
         this.client = client;
         blackClock = new Clock(hh, ss, mm);
         whiteClock = new Clock(hh, ss, mm);
@@ -31,6 +29,7 @@ public class GameWindow {
         addGameComponents(blackName, whiteName, hh, mm, ss);
         gameWindow.setVisible(true);
     }
+
 
     private void initializeFrame() {
         gameWindow = new JFrame("Chess");
@@ -48,7 +47,6 @@ public class GameWindow {
     }
 
     private void addGameComponents(String blackName, String whiteName, int hh, int mm, int ss) {
-        this.board = new Board(this, client);
 
         JPanel gameData = createGameDataPanel(blackName, whiteName, hh, mm, ss);
         gameWindow.add(gameData, BorderLayout.NORTH);
@@ -79,7 +77,7 @@ public class GameWindow {
             wTime.setText("Untimed game");
             bTime.setText("Untimed game");
         } else {
-            chessTimer = new ChessTimer(board, whiteClock, blackClock, wTime, bTime, gameWindow, wn, bn, hh, mm, ss);
+            chessTimer = new ChessTimer(board, whiteClock, blackClock, wTime, bTime, gameWindow, wn, bn, hh, mm, ss, client);
             chessTimer.start();
         }
 

@@ -1,8 +1,10 @@
 package controller;
 
 import model.Clock;
+import network.ChessClient;
 import view.Board;
 import view.GameWindow;
+import view.StartMenu;
 
 import javax.swing.*;
 import java.awt.event.ActionEvent;
@@ -10,6 +12,7 @@ import java.awt.event.ActionListener;
 
 public class ChessTimer {
     private final Timer timer;
+    private final ChessClient client;
 
 
     public ChessTimer(Board board,
@@ -22,8 +25,10 @@ public class ChessTimer {
                       String blackName,
                       int hh,
                       int mm,
-                      int ss) {
+                      int ss,
+                      ChessClient client) {
 
+        this.client = client;
         this.timer = new Timer(1000, new ActionListener() {
             @Override
             public void actionPerformed(ActionEvent e) {
@@ -54,8 +59,9 @@ public class ChessTimer {
                 );
 
                 if (choice == JOptionPane.YES_OPTION) {
-                    new GameWindow(opponent, winner, hh, mm, ss, null);
+                    SwingUtilities.invokeLater(new StartMenu(client)); // Restart properly
                 }
+
                 parent.dispose();
             }
         });

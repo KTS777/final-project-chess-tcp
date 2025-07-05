@@ -16,7 +16,7 @@ import java.util.List;
 public class Board extends JPanel {
 
     private final Square[][] board;
-    private final GameWindow gameWindow;
+    private GameWindow gameWindow;
 
     private static final int BOARD_SIZE = 8;
 
@@ -32,8 +32,8 @@ public class Board extends JPanel {
 
     private final BoardRenderer renderer = new BoardRenderer();
 
-    public Board(GameWindow gameWindow, ChessClient client) {
-        this.gameWindow = gameWindow;
+    public Board(ChessClient client) {
+        this.gameWindow = null;
         this.client = client;
         board = new Square[BOARD_SIZE][BOARD_SIZE];
         blackPieces = new LinkedList<>();
@@ -43,7 +43,6 @@ public class Board extends JPanel {
         registerInputListeners();
 
         initializeBoardSquares();
-        initializePieces();
         configureBoardSize();
     }
 
@@ -60,6 +59,11 @@ public class Board extends JPanel {
             }
         }
     }
+
+    public King[] setupStandardPosition() {
+        return PieceFactory.createStandardSetup(board, whitePieces, blackPieces);
+    }
+
 
     private void registerInputListeners() {
         BoardMouseHandler handler = new BoardMouseHandler(this, client);
@@ -79,18 +83,13 @@ public class Board extends JPanel {
     private void initializeBoardSquares() {
         for (int y = 0; y < BOARD_SIZE; y++) {
             for (int x = 0; x < BOARD_SIZE; x++) {
-                int color = (x + y) % 2;
+                int color = (x + y + 1) % 2;
                 board[y][x] = new Square(color, x, y);
                 this.add(board[y][x]);
             }
         }
     }
 
-    private void initializePieces() {
-        King[] kings = PieceFactory.createStandardSetup(board, whitePieces, blackPieces);
-        CheckmateDetector cmd = new CheckmateDetector(this, whitePieces, blackPieces, kings[0], kings[1]);
-        gameController = new GameController(cmd, this);
-    }
 
     public Square[][] getSquareArray() {
         return this.board;
@@ -134,4 +133,14 @@ public class Board extends JPanel {
     public List<Piece> getBlackPieces() {
         return blackPieces;
     }
+
+    public void setGameController(GameController gameController) {
+        this.gameController = gameController;
+    }
+
+    public void setGameWindow(GameWindow window) {
+        this.gameWindow = window;
+    }
+
+
 }

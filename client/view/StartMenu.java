@@ -1,10 +1,15 @@
 package view;
 
+import controller.CheckmateDetector;
+import controller.GameController;
+import model.Square;
+import model.pieces.King;
 import network.ChessClient;
 
 import javax.imageio.ImageIO;
 import javax.swing.*;
 import java.awt.*;
+import java.util.LinkedList;
 
 public class StartMenu implements Runnable {
 
@@ -53,48 +58,73 @@ public class StartMenu implements Runnable {
     }
 
 
-    private Box createControlButtons(JFrame startWindow,
-                                     JTextField blackInput,
-                                     JTextField whiteInput,
-                                     JComboBox<String> hours,
-                                     JComboBox<String> minutes,
-                                     JComboBox<String> seconds) {
-        Box buttons = Box.createHorizontalBox();
-
-        JButton quit = new JButton("Quit");
-        quit.addActionListener(e -> startWindow.dispose());
-
-        JButton instr = new JButton("Instructions");
-        instr.addActionListener(e -> showInstructionsDialog(startWindow));
-
-        JButton start = new JButton("Start");
-        start.addActionListener(e -> handleStartClick(
-                blackInput, whiteInput, hours, minutes, seconds, startWindow));
-
-        buttons.add(start);
-        buttons.add(Box.createHorizontalStrut(10));
-        buttons.add(instr);
-        buttons.add(Box.createHorizontalStrut(10));
-        buttons.add(quit);
-
-        return buttons;
-    }
-
     private void handleStartClick(JTextField blackInput,
                                   JTextField whiteInput,
                                   JComboBox<String> hours,
                                   JComboBox<String> minutes,
                                   JComboBox<String> seconds,
                                   JFrame startWindow) {
-        String bn = blackInput.getText();
-        String wn = whiteInput.getText();
+
+        String blackName = blackInput.getText();
+        String whiteName = whiteInput.getText();
         int hh = Integer.parseInt((String) hours.getSelectedItem());
         int mm = Integer.parseInt((String) minutes.getSelectedItem());
         int ss = Integer.parseInt((String) seconds.getSelectedItem());
 
-        new GameWindow(bn, wn, hh, mm, ss, client);
+        boolean isWhite = client.getRole().equals("WHITE");
+
+        // Swap player names based on actual role
+        String player1 = isWhite ? whiteName : blackName;
+        String player2 = isWhite ? blackName : whiteName;
+
+        // Create board
+        Board board = new Board(client);
+
+        King[] kings = board.setupStandardPosition();
+        King whiteKing = kings[0];
+        King blackKing = kings[1];
+
+        CheckmateDetector detector = new CheckmateDetector(board,
+                new LinkedList<>(board.getWhitePieces()),
+                new LinkedList<>(board.getBlackPieces()),
+                whiteKing, blackKing);
+
+        GameController controller = new GameController(detector, board, isWhite);
+
+        board.setGameController(controller);
+        GameWindow gameWindow = new GameWindow(board, player1, player2, hh, mm, ss, client);
+        board.setGameWindow(gameWindow);
+
+        // Attach listeners
+        BoardMouseHandler handler = new BoardMouseHandler(board, client);
+        board.addMouseListener(handler);
+        board.addMouseMotionListener(handler);
+
+        // Start receiver thread
+        new Thread(() -> {
+            while (true) {
+                String move = client.receiveMessage();
+                if (move == null || move.length() != 4) continue;
+
+                char fx = move.charAt(0);
+                char fy = move.charAt(1);
+                char tx = move.charAt(2);
+                char ty = move.charAt(3);
+
+                Square from = board.getSquare(fx - 'a', 8 - Character.getNumericValue(fy));
+                Square to   = board.getSquare(tx - 'a', 8 - Character.getNumericValue(ty));
+
+                SwingUtilities.invokeLater(() -> {
+                    controller.setCurrentPiece(from.getOccupyingPiece());
+                    controller.handlePieceDrop(to);
+                    board.repaint();
+                });
+            }
+        }).start();
+
         startWindow.dispose();
     }
+
 
 
     private void addTitlePanel(Box container) {
@@ -169,6 +199,34 @@ public class StartMenu implements Runnable {
         }
         return label;
     }
+
+    private Box createControlButtons(JFrame startWindow,
+                                     JTextField blackInput,
+                                     JTextField whiteInput,
+                                     JComboBox<String> hours,
+                                     JComboBox<String> minutes,
+                                     JComboBox<String> seconds) {
+        Box buttons = Box.createHorizontalBox();
+
+        JButton quit = new JButton("Quit");
+        quit.addActionListener(e -> startWindow.dispose());
+
+        JButton instr = new JButton("Instructions");
+        instr.addActionListener(e -> showInstructionsDialog(startWindow));
+
+        JButton start = new JButton("Start");
+        start.addActionListener(e -> handleStartClick(
+                blackInput, whiteInput, hours, minutes, seconds, startWindow));
+
+        buttons.add(start);
+        buttons.add(Box.createHorizontalStrut(10));
+        buttons.add(instr);
+        buttons.add(Box.createHorizontalStrut(10));
+        buttons.add(quit);
+
+        return buttons;
+    }
+
 
 
 }

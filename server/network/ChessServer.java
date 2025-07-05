@@ -22,6 +22,13 @@ public class ChessServer {
             player2Socket = serverSocket.accept();
             System.out.println("[SERVER] Player 2 connected: " + player2Socket.getInetAddress());
 
+            //Send roles
+            PrintWriter out1 = new PrintWriter(player1Socket.getOutputStream(), true);
+            PrintWriter out2 = new PrintWriter(player2Socket.getOutputStream(), true);
+            out1.println("WHITE");
+            out2.println("BLACK");
+
+
             // Start handler threads
             pool.execute(new ClientHandler(player1Socket, player2Socket, "Player 1"));
             pool.execute(new ClientHandler(player2Socket, player1Socket, "Player 2"));

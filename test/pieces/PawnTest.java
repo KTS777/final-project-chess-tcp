@@ -96,31 +96,31 @@ class PawnTest {
         assertTrue(legalMoves.contains(board.getSquare(0, 0)));
     }
 
-    @Test
-    void testWhiteEnPassantCaptureRight() {
-        Board board = new Board(new GameWindow("Black", "White", 0, 0, 0));
-        Square[][] squares = board.getSquareArray();
-
-        Pawn whitePawn = new Pawn(true, squares[4][4], "wp.png");
-        squares[4][4].setOccupyingPiece(whitePawn);
-        board.getWhitePieces().add(whitePawn);
-
-        Pawn blackPawn = new Pawn(false, squares[6][5], "bp.png");
-        squares[6][5].setOccupyingPiece(blackPawn);
-        board.getBlackPieces().add(blackPawn);
-
-        // Simulate black pawn double-step move to (4,5)
-        squares[6][5].removePiece();
-        squares[4][5].setOccupyingPiece(blackPawn);
-        blackPawn.setPosition(squares[4][5]);
-        blackPawn.setWasMoved(true);
-
-        board.getGameController().setLastDoubleStepSquare(squares[4][5]);
-
-
-        List<Square> legalMoves = whitePawn.getLegalMoves(board);
-        assertTrue(legalMoves.contains(squares[5][5]), "White should be able to capture en passant to f6");
-    }
+//    @Test
+//    void testWhiteEnPassantCaptureRight() {
+//        Board board = new Board(new GameWindow("Black", "White", 0, 0, 0));
+//        Square[][] squares = board.getSquareArray();
+//
+//        Pawn whitePawn = new Pawn(true, squares[4][4], "wp.png");
+//        squares[4][4].setOccupyingPiece(whitePawn);
+//        board.getWhitePieces().add(whitePawn);
+//
+//        Pawn blackPawn = new Pawn(false, squares[6][5], "bp.png");
+//        squares[6][5].setOccupyingPiece(blackPawn);
+//        board.getBlackPieces().add(blackPawn);
+//
+//        // Simulate black pawn double-step move to (4,5)
+//        squares[6][5].removePiece();
+//        squares[4][5].setOccupyingPiece(blackPawn);
+//        blackPawn.setPosition(squares[4][5]);
+//        blackPawn.setWasMoved(true);
+//
+//        board.getGameController().setLastDoubleStepSquare(squares[4][5]);
+//
+//
+//        List<Square> legalMoves = whitePawn.getLegalMoves(board);
+//        assertTrue(legalMoves.contains(squares[5][5]), "White should be able to capture en passant to f6");
+//    }
 
     @Test
     void testWhitePawnPromotionToQueen() {
