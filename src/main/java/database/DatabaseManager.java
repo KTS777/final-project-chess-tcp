@@ -1,6 +1,8 @@
 package database;
 
 import java.sql.*;
+import java.util.ArrayList;
+import java.util.List;
 
 public class DatabaseManager {
     private static final String URL = "jdbc:postgresql://localhost:5432/chess_db";
@@ -48,6 +50,30 @@ public class DatabaseManager {
         } catch (SQLException e) {
             System.err.println("[DB] Failed to save game: " + e.getMessage());
         }
+    }
+
+    public List<GameRecord> fetchAllGames() {
+        List<GameRecord> games = new ArrayList<>();
+        String sql = "SELECT * FROM games";
+
+        try (Statement stmt = connection.createStatement();
+             ResultSet rs = stmt.executeQuery(sql)) {
+
+            while (rs.next()) {
+                GameRecord game = new GameRecord(
+                        rs.getInt("white_player_id"),
+                        rs.getInt("black_player_id"),
+                        rs.getString("winner"),
+                        rs.getString("pgn"),
+                        rs.getTimestamp("played_at").toLocalDateTime()
+                );
+                games.add(game);
+            }
+        } catch (SQLException e) {
+            System.err.println("[DB] Failed to fetch games: " + e.getMessage());
+        }
+
+        return games;
     }
 
     public void close() {

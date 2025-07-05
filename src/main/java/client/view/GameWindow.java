@@ -4,11 +4,15 @@ package client.view;
 import client.controller.ChessTimer;
 import client.model.Clock;
 import client.network.ChessClient;
+import database.DatabaseManager;
+import database.GameRecord;
 
 import javax.imageio.ImageIO;
 import javax.swing.*;
 import java.awt.*;
 import java.awt.event.ActionListener;
+import java.io.File;
+import java.util.List;
 
 
 public class GameWindow {
@@ -162,18 +166,53 @@ public class GameWindow {
 
         String winner = (winningColor == 0) ? "White" : "Black";
 
-        int choice = JOptionPane.showConfirmDialog(
+        int exportChoice = JOptionPane.showConfirmDialog(
                 gameWindow,
-                winner + " wins by checkmate! Set up a new game?\n" +
-                        "Choosing \"No\" lets you look at the final situation.",
+                winner + " wins by checkmate! Do you want to export the game to PGN?",
                 winner + " wins!",
                 JOptionPane.YES_NO_OPTION
         );
 
-        if (choice == JOptionPane.YES_OPTION) {
+        if (exportChoice == JOptionPane.YES_OPTION) {
+            exportLatestGame();
+        }
+
+        int restartChoice = JOptionPane.showConfirmDialog(
+                gameWindow,
+                "Set up a new game?",
+                "New Game",
+                JOptionPane.YES_NO_OPTION
+        );
+
+        if (restartChoice == JOptionPane.YES_OPTION) {
             SwingUtilities.invokeLater(new StartMenu(client));
             gameWindow.dispose();
         }
     }
+
+    private void exportLatestGame() {
+        DatabaseManager db = new DatabaseManager();
+        List<GameRecord> games = db.fetchAllGames();
+
+        if (games.isEmpty()) {
+            JOptionPane.showMessageDialog(gameWindow, "No games found in the database to export.");
+            return;
+        }
+
+        GameRecord latestGame = games.get(games.size() - 1); // latest
+
+        JFileChooser fileChooser = new JFileChooser();
+        fileChooser.setDialogTitle("Save PGN File");
+        fileChooser.setSelectedFile(new File("game_" + latestGame.getPlayedAt().toLocalDate() + ".pgn"));
+
+        int userSelection = fileChooser.showSaveDialog(gameWindow);
+        if (userSelection == JFileChooser.APPROVE_OPTION) {
+            File fileToSave = fileChooser.getSelectedFile();
+            export.PGNExporter.exportGame(latestGame, fileToSave.getAbsolutePath());
+            JOptionPane.showMessageDialog(gameWindow, "Game exported to " + fileToSave.getAbsolutePath());
+        }
+    }
+
+
 
 }

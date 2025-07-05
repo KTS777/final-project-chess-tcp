@@ -173,9 +173,6 @@ public class GameController {
         }
 
 
-        String whiteUsername = "Alice";
-        String blackUsername = "Bob";
-
         if (isWhitePlayer) {
             DatabaseManager db = new DatabaseManager();
             db.connect("localhost", "chess_db", "postgres", "password");
