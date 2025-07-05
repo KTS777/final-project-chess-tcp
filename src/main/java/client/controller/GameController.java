@@ -2,9 +2,14 @@ package client.controller;
 
 
 import client.view.Board;
+import database.DatabaseManager;
 import shared.model.Piece;
 import shared.model.Square;
 import shared.model.pieces.Pawn;
+
+import java.sql.SQLException;
+import java.util.ArrayList;
+import java.util.List;
 
 public class GameController {
     public static final int BLACK = 0;
@@ -20,6 +25,8 @@ public class GameController {
 
 
     private Square lastDoubleStepSquare;
+
+    private final List<String> movesPGN = new ArrayList<>();
 
 
 
@@ -71,7 +78,7 @@ public class GameController {
         square.setDisplay(false);
     }
 
-    public boolean handlePieceDrop(Square targetSquare) {
+    public boolean handlePieceDrop(Square targetSquare) throws SQLException {
         if (isMoveValid(targetSquare)) {
             applyMove(targetSquare);
             return true;
@@ -89,7 +96,9 @@ public class GameController {
                 checkmateDetector.testMove(currPiece, targetSquare);
     }
 
-    private void applyMove(Square targetSquare) {
+    private void applyMove(Square targetSquare) throws SQLException {
+        String fromAlgebraic = currPiece.getPosition().getAlgebraic(); // <-- save from-square before move
+
         targetSquare.setDisplay(true);
 
         if (currPiece instanceof Pawn pawn) {
@@ -118,10 +127,28 @@ public class GameController {
         } else if (checkmateDetector.whiteCheckMated()) {
             finishGame(BLACK);
         } else {
+            String pgnMove = convertToPGN(currPiece, fromAlgebraic, targetSquare);
+            movesPGN.add(pgnMove);
+            System.out.println("[PGN] " + pgnMove);
             currPiece = null;
             switchTurn();
         }
     }
+
+    private String convertToPGN(Piece piece, String from, Square to) {
+        String pieceCode = piece.getPGNCode(); // Usually returns "N", "B", etc. "P" for pawn
+        String toAlgebraic = to.getAlgebraic();
+
+        if (pieceCode.equals("")) {
+            if (!to.isOccupied() && !from.substring(0, 1).equals(toAlgebraic.substring(0, 1))) {
+                return from.charAt(0) + "x" + toAlgebraic;
+            }
+            return toAlgebraic;
+        }
+
+        return pieceCode + toAlgebraic;
+    }
+
 
     private void cancelMove() {
         if (currPiece != null) {
@@ -130,9 +157,37 @@ public class GameController {
         }
     }
 
-    private void finishGame(int winningColor) {
+    private void finishGame(int winningColor) throws SQLException {
         this.gameOver = true;
         this.winningColor = winningColor;
+
+        String resultString = (winningColor == WHITE) ? "1-0" : (winningColor == BLACK ? "0-1" : "1/2-1/2");
+
+        // Format PGN moves
+        StringBuilder pgn = new StringBuilder();
+        for (int i = 0; i < movesPGN.size(); i++) {
+            if (i % 2 == 0) pgn.append((i / 2) + 1).append(". ");
+            pgn.append(movesPGN.get(i)).append(" ");
+        }
+
+        // Save to DB (replace with real usernames once you add login later)
+        String whiteUsername = "Alice";
+        String blackUsername = "Bob";
+
+        DatabaseManager db = new DatabaseManager();
+        db.connect("jdbc:postgresql://localhost:5432/chess_db", "chess_db", "postgres", "your_password");
+        db.saveGame(3, 4, resultString, pgn.toString().trim());
+        db.disconnect();
+
+        // Print full PGN
+        System.out.println("\nPGN:");
+        for (int i = 0; i < movesPGN.size(); i++) {
+            if (i % 2 == 0) System.out.print(((i / 2) + 1) + ". ");
+            System.out.print(movesPGN.get(i) + " ");
+        }
+        System.out.println();
+
+        System.out.println(resultString);
     }
 
     public boolean isGameOver() {

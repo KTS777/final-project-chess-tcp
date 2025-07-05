@@ -167,6 +167,19 @@ public abstract class Piece {
         return result;
     }
 
+    public String getPGNCode() {
+        return switch (this.getClass().getSimpleName()) {
+            case "Knight" -> "N";
+            case "Bishop" -> "B";
+            case "Rook" -> "R";
+            case "Queen" -> "Q";
+            case "King" -> "K";
+            case "Pawn" -> ""; // no code for pawn
+            default -> "?";
+        };
+    }
+
+
     public abstract List<Square> getLegalMoves(Board b);
 
     public abstract String getSymbol();

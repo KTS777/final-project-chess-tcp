@@ -71,6 +71,13 @@ public class Square extends JComponent {
         }
     }
 
+    public String getAlgebraic() {
+        char file = (char) ('a' + getXNum());
+        int rank = 8 - getYNum();
+        return "" + file + rank;
+    }
+
+
     @Override
     public boolean equals(Object o) {
         if (this == o) return true;
