@@ -1,0 +1,8 @@
+pieces\PawnTest.class
+pieces\KingCastlingTest.class
+pieces\KingTest.class
+pieces\RookTest.class
+GameStateTest.class
+pieces\BishopTest.class
+pieces\QueenTest.class
+pieces\KnightTest.class
