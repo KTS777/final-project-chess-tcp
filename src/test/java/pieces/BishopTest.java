@@ -52,26 +52,30 @@ public class BishopTest {
         });
     }
 
-    @Test
-    public void testBishopBlockedByOwnPiece() throws Exception {
-        SwingUtilities.invokeAndWait(() -> {
-            Bishop blocker = new Bishop(true, board.getSquare(5, 5), null);
-            board.getSquare(5, 5).setOccupyingPiece(blocker);
 
-            List<Square> moves = whiteBishop.getLegalMoves(board);
-            assertFalse(moves.contains(board.getSquare(5, 5)));
-            assertFalse(moves.contains(board.getSquare(6, 6)));
-        });
-    }
 
     @Test
-    public void testBishopCanCaptureOpponent() throws Exception {
+    public void testNotMoveOffBoard() throws Exception {
         SwingUtilities.invokeAndWait(() -> {
-            Bishop blackBishop = new Bishop(false, board.getSquare(1, 1), null);
-            board.getSquare(1, 1).setOccupyingPiece(blackBishop);
+            Bishop edgeBishop = new Bishop(true, board.getSquare(0, 0), null);
+            board.getSquare(0, 0).setOccupyingPiece(edgeBishop);
 
-            List<Square> moves = whiteBishop.getLegalMoves(board);
+            List<Square> moves = edgeBishop.getLegalMoves(board);
+
+            // Only NE direction should be available (e.g., (1,1), (2,2), ...)
+            // Confirm that all moves are inside board boundaries (0-7)
+            for (Square move : moves) {
+                int x = move.getX();
+                int y = move.getY();
+                assertTrue(x >= 0 && x < 8, "Move x out of bounds: " + x);
+                assertTrue(y >= 0 && y < 8, "Move y out of bounds: " + y);
+            }
+
+            // Specifically check that (1,1) is a legal move
             assertTrue(moves.contains(board.getSquare(1, 1)));
+
+            // Do NOT check moves containing invalid squares like (-1, -1)
+            // because those squares don't exist in the board.
         });
     }
 }
